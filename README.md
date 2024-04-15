@@ -8,3 +8,14 @@
 •	Clone the Module 2 branch and print the content of module2.txt to the console 
 6. Check the availability of the VMs using the ping command (ping must work with DNS names between the VMs) 
 7. Upload the results manually to the module2 branch of your GItHub repository 
+
+
+### Start 'vagrant up' command:
+![img.png](img.png)
+
+### Output 'module2.txt' value on VM:
+![img_2.png](img_2.png)
+
+### SSH connection to VM from local PC and echo request:
+![img_1.png](img_1.png)
+![img_3.png](img_3.png)
