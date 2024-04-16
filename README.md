@@ -4,3 +4,4 @@
 3. When the number of VMs is specified, one of the VMs must have a webserver installed (Apache or NGINX), the other VMs must have Tomcat installed and contain an index.html inside /usr/share/tomcat/webapps/ with a welcome text and the name of the VM on which the page is located. The webserver must be configured as a load balancer (default load balancing algorithm). 
 !!!! Note: if the number of VMs = 1, only the VM with webserver must be launched. In all other cases 1 webserver VM is launched, and the other VMs with Tomcat. 
 
+![image](https://github.com/ianikeyenka/vagrant-training/assets/71770143/ad5523a9-dca7-4dcf-acd3-5e3258bfbd6f)
