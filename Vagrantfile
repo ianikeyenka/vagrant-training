@@ -1,3 +1,7 @@
+IP_NTW = "192.168.5."
+IP_HOST = "10"
+NODE_APP_IP_START = 10
+
 Vagrant.configure("2") do |config|
 
   config.hostmanager.enabled = true
@@ -24,8 +28,8 @@ Vagrant.configure("2") do |config|
   # Launch webserver VM
   config.vm.define "webserver" do |webserver|
     webserver.vm.hostname = "webserver"
-    webserver.vm.network "forwarded_port", guest: 80, host: 8080
-    webserver.vm.network "private_network", ip: "192.168.5.10"
+    webserver.vm.network "forwarded_port", guest: 80, host: "8080", protocol: "tcp"
+    webserver.vm.network "private_network", ip: IP_NTW + IP_HOST
     webserver.vm.provider "virtualbox" do |vb|
       vb.name = "webserver"
     end
@@ -39,15 +43,16 @@ Vagrant.configure("2") do |config|
     # Configure load balancing
     echo "http {" | sudo tee /etc/nginx/nginx.conf
     echo "    upstream backend {" | sudo tee -a /etc/nginx/nginx.conf
-    echo "        server 192.168.5.11;" | sudo tee -a /etc/nginx/nginx.conf
-    echo "        server 192.168.5.12;" | sudo tee -a /etc/nginx/nginx.conf
-    echo "        server 192.168.5.13;" | sudo tee -a /etc/nginx/nginx.conf
+    for i in {#{NODE_APP_IP_START+1}..#{NODE_APP_IP_START+vm_count-1}}
+      do
+        echo "        server #{IP_NTW}$i:8080;" | sudo tee -a /etc/nginx/nginx.conf
+      done
     echo "    }" | sudo tee -a /etc/nginx/nginx.conf
     echo "    server {" | sudo tee -a /etc/nginx/nginx.conf
     echo "        listen 8080;" | sudo tee -a /etc/nginx/nginx.conf
     echo "        server_name example.com;" | sudo tee -a /etc/nginx/nginx.conf
     echo "        location / {" | sudo tee -a /etc/nginx/nginx.conf
-    echo "            proxy_pass http://192.168.5.11;" | sudo tee -a /etc/nginx/nginx.conf
+    echo "            proxy_pass http://backend;" | sudo tee -a /etc/nginx/nginx.conf
     echo "        }" | sudo tee -a /etc/nginx/nginx.conf
     echo "    }" | sudo tee -a /etc/nginx/nginx.conf
     echo "}" | sudo tee -a /etc/nginx/nginx.conf
@@ -63,7 +68,7 @@ Vagrant.configure("2") do |config|
     (1..(vm_count - 1)).each do |i|
      config.vm.define "tomcat#{i}" do |tomcat|
        tomcat.vm.hostname = "tomcat#{i}"
-       tomcat.vm.network "private_network", ip: "192.168.5.#{i + 10}"
+       tomcat.vm.network "private_network", ip:  IP_NTW + "#{i + 10}"
        tomcat.vm.provider "virtualbox" do |vb|
          vb.name = "tomcat#{i}"
        end
